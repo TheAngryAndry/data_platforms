@@ -1,0 +1,21 @@
+[Unit]
+Description=Apache Hadoop HDFS NameNode
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=hdfs
+Group=hadoop
+Environment=HADOOP_HOME=/opt/hadoop
+Environment=HADOOP_CONF_DIR=/etc/hadoop/conf
+Environment=HADOOP_LOG_DIR=/var/log/hadoop-hdfs
+Environment=HADOOP_PID_DIR=/run/hadoop-hdfs
+RuntimeDirectory=hadoop-hdfs
+ExecStart=/opt/hadoop/bin/hdfs namenode
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

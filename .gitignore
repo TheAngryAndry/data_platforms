@@ -1,0 +1,7 @@
+# Local agent context is not part of the assignment deliverables.
+AGENTS.md
+
+# Editor and OS metadata.
+.DS_Store
+*.swp
+*~
