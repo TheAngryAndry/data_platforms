@@ -38,6 +38,7 @@ temp/
 *.tmp
 
 # Build artifacts
+*.tar.gz
 build/
 dist/
 *.egg-info/

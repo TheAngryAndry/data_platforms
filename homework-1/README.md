@@ -1,78 +1,26 @@
 # HDFS cluster
 
-Автоматизированное развертывание HDFS-кластера Apache Hadoop 3.4.2 с NameNode, SecondaryNameNode и 3 DataNode.
+Установка Apache Hadoop 3.4.2 с NameNode, SecondaryNameNode и тремя DataNode на чистые Ubuntu/Debian VM.
 
-## Инструкция
+На локальной машине нужны `bash`, `ssh`, `scp` и ключ `~/.ssh/id_ed25519_mts_course`.
+На edge-ноде нужны `bash`, `curl`, `ssh`, `scp` и ключ `~/.ssh/team_internal`.
+Пользователь `team` должен иметь доступ к внутренним узлам и `sudo` без пароля.
 
-На локальной машине должны быть доступны `bash`, `ssh`, `scp` и SSH-ключ:
-
-```text
-~/.ssh/id_ed25519_mts_course
-```
-
-На edge-ноде должен находиться внутренний SSH-ключ:
-
-```text
-~/.ssh/team_internal
-```
-
-Клонировать репозиторий:
+Из корня репозитория:
 
 ```bash
-git clone https://github.com/TheAngryAndry/data_platforms.git
-cd data_platforms/homework-1
-
-Параметры кластера находятся в `cluster.env`. В нем указаны версия Hadoop, адрес edge-ноды, внутренние узлы и параметры Java.
-
-Запустить развертывание с локальной машины:
-
-```bash
-chmod +x scripts/*.sh
-./scripts/deploy-hdfs.sh
+cd homework-1
+./scripts/deploy.sh
 ```
 
-При запуске скрипт:
+Скрипт копирует папку `homework-1` в домашний каталог на edge, скачивает Hadoop и передает папку на внутренние узлы. На каждом узле устанавливаются Java и Hadoop, создаются пользователь `hdfs`, каталоги, конфигурация и systemd-сервисы. Затем форматируется NameNode и запускаются сервисы.
 
-1. Копирует конфигурацию и скрипты на edge-ноду.
-2. Скачивает Hadoop 3.4.2 и проверяет SHA-512.
-3. Передает необходимые файлы на внутренние узлы.
-4. Устанавливает OpenJDK 11 и Hadoop.
-5. Создает пользователя `hdfs` и необходимые каталоги.
-6. Устанавливает конфигурацию Hadoop и systemd-сервисы.
-7. Форматирует NameNode при первом запуске.
-8. Запускает NameNode, SecondaryNameNode и 3 DataNode.
-9. Проверяет состояние кластера.
+NameNode, SecondaryNameNode и один DataNode работают на `team-01-nn`. Еще два DataNode — на `team-01-00` и `team-01-01`.
 
-NameNode, SecondaryNameNode и один DataNode запускаются на `team-01-nn`. Еще два DataNode запускаются на `team-01-00` и `team-01-01`.
+Параметры установки находятся в `cluster.env`, настройки HDFS — в `config/`, systemd-сервисы — в `systemd/`.
 
-Повторный запуск не форматирует уже созданный NameNode и не удаляет данные HDFS.
+Скрипты предназначены для первоначальной установки: повторный запуск остановится, если группа `hadoop` уже существует. Форматирование выполняется без `-force`. Проверок состояния кластера и ожидания готовности сервисов нет; `set -e` останавливает выполнение при ошибке команды.
 
-## Проверка
-
-Проверку можно запустить отдельно с локальной машины:
-
-```bash
-./scripts/verify-hdfs.sh
-```
-
-Скрипт проверяет:
-
-- состояние HDFS-сервисов
-- наличие 3 live DataNode
-- отсутствие dead DataNode
-- результат `hdfs fsck /`
-- отсутствие ошибок в логах HDFS-сервисов
-
-Успешная проверка заканчивается строкой:
-
-```text
-PASS: HDFS is healthy; 3 live DataNodes, 0 dead DataNodes
-```
-
-## Скрипты
-
-- `scripts/deploy-hdfs.sh` - запуск развертывания с локальной машины
-- `scripts/deploy-from-edge.sh` - передача файлов и запуск установки на внутренних узлах
-- `scripts/install-node.sh` - установка и настройка Hadoop на отдельном узле
-- `scripts/verify-hdfs.sh` - запуск проверки с локальной машины
-- `scripts/verify-on-edge.sh` - проверка сервисов, DataNode, `fsck` и логов
+- `scripts/deploy.sh` — запуск с локальной машины.
+- `scripts/deploy-edge.sh` — скачивание Hadoop, копирование файлов и запуск команд на узлах.
+- `scripts/install.sh` — установка Java, Hadoop и конфигурации на узле.
