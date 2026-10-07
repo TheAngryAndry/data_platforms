@@ -20,8 +20,7 @@
 
 ```bash
 git clone https://github.com/TheAngryAndry/data_platforms.git
-cd data_platforms
-```
+cd data_platforms/homework-1
 
 Параметры кластера находятся в `cluster.env`. В нем указаны версия Hadoop, адрес edge-ноды, внутренние узлы и параметры Java.
 
