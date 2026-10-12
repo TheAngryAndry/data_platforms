@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Run as root on NameNode: HDFS resolves user groups on this host.
+# HDFS resolves user groups on the NameNode.
 backup=$(mktemp -d /var/backups/data-platforms-hdfs.XXXXXX)
 getent passwd yarn mapred > "$backup/users.txt" || true
 dfs() { sudo -u hdfs /opt/hadoop/bin/hdfs --config /etc/hadoop/conf dfs "$@"; }

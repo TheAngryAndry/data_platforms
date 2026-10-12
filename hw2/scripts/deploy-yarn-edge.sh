@@ -5,7 +5,6 @@ cd "$(dirname "$0")/.."
 source ./cluster.conf
 ssh_opts=(-i "$HOME/.ssh/team_internal" -o BatchMode=yes -o StrictHostKeyChecking=accept-new)
 
-# Check the existing cluster before changing configuration.
 for host in $DATANODE_HOSTS; do
   ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'systemctl is-active --quiet hdfs-datanode' || {
     echo 'HW2 requires the running HDFS cluster from HW1. Complete hw1 first.' >&2
@@ -23,7 +22,6 @@ for file in core-site.xml hdfs-site.xml; do
   scp "${ssh_opts[@]}" "$SSH_USER@$NAMENODE_HOST:/etc/hadoop/conf/$file" runtime/hdfs-conf/
 done
 if [[ ! -x /opt/hadoop/bin/yarn ]]; then
-  # Use exactly the same Hadoop distribution as the running HDFS cluster.
   ssh "${ssh_opts[@]}" "$SSH_USER@$NAMENODE_HOST" \
     "tar -C /opt -czf - hadoop-$HADOOP_VERSION" > runtime/hadoop.tar.gz
 fi

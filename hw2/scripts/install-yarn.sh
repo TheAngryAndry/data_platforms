@@ -66,7 +66,7 @@ ET.SubElement(prop, 'value').text = sys.argv[1]
 tree.write(path, encoding='UTF-8', xml_declaration=True)
 PY
 fi
-# HDFS uses a private local tmp directory; YARN clients need their own.
+# YARN users cannot write to HDFS's local tmp directory.
 python3 - <<'PY'
 import xml.etree.ElementTree as ET
 path = '/etc/hadoop/yarn-conf/core-site.xml'

@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 from pathlib import Path
 
-# Hadoop RPC resolves the bind address back to a hostname. The VM image maps
-# its own hostname to 127.0.1.1; all cluster aliases must resolve to the LAN.
+# Hadoop RPC can bind to loopback if the VM hostname resolves to 127.0.1.1.
 nodes = {
     'team-01-en': '10.1.0.10',
     'team-01-nn': '10.1.0.11',
