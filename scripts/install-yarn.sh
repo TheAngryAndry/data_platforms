@@ -3,10 +3,10 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 source ./cluster.conf
-role=${1:?Usage: install.sh edge|worker}
+role=${1:?Usage: install-yarn.sh edge|worker}
 [[ $role == edge || $role == worker ]]
 
-backup=$(mktemp -d /var/backups/homework-2.XXXXXX)
+backup=$(mktemp -d /var/backups/data-platforms.XXXXXX)
 for path in /etc/hosts /etc/hadoop/yarn-conf /etc/nginx /etc/profile.d/hadoop-yarn.sh \
   /etc/systemd/system/yarn-resourcemanager.service \
   /etc/systemd/system/yarn-nodemanager.service \
@@ -48,7 +48,8 @@ if [[ $role == edge ]]; then
 else
   cp /etc/hadoop/conf/{core-site.xml,hdfs-site.xml} /etc/hadoop/yarn-conf/
 fi
-install -o root -g hadoop -m 0644 config/* /etc/hadoop/yarn-conf/
+install -o root -g hadoop -m 0644 config/yarn-site.xml config/mapred-site.xml config/capacity-scheduler.xml /etc/hadoop/yarn-conf/
+install -o root -g hadoop -m 0644 config/yarn-env.sh /etc/hadoop/yarn-conf/hadoop-env.sh
 if [[ $role == worker ]]; then
   case $(hostname -s) in
     team-01-00) node_ip=10.1.0.12 ;;

@@ -35,7 +35,7 @@ cat "$work/hdfs-report"
 grep -q 'Live datanodes (3)' "$work/hdfs-report"
 if grep -Eq 'Dead datanodes \([1-9]' "$work/hdfs-report"; then exit 1; fi
 
-run="/user/team/homework-2-$(date -u +%Y%m%dT%H%M%S)-$$"
+run="/user/team/data-platforms-$(date -u +%Y%m%dT%H%M%S)-$$"
 printf 'hadoop yarn hadoop\nyarn hdfs\n' > "$work/input.txt"
 hdfs dfs -mkdir -p "$run/input"
 hdfs dfs -put "$work/input.txt" "$run/input/"

@@ -23,11 +23,11 @@ if [[ ! -x /opt/hadoop/bin/yarn ]]; then
     "tar -C /opt -czf - hadoop-$HADOOP_VERSION" > runtime/hadoop.tar.gz
 fi
 
-sudo bash scripts/install.sh edge
+sudo bash scripts/install-yarn.sh edge
 for host in $NODEMANAGER_HOSTS; do
-  tar --exclude='./runtime' --exclude='*.log' -czf - . |
-    ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'mkdir -p ~/homework-2; tar -xzf - -C ~/homework-2'
-  ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'sudo bash ~/homework-2/scripts/install.sh worker'
+  tar -czf - cluster.conf config scripts systemd nginx |
+    ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'mkdir -p ~/data-platforms; tar -xzf - -C ~/data-platforms'
+  ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'sudo bash ~/data-platforms/scripts/install-yarn.sh worker'
 done
 
 ssh "${ssh_opts[@]}" "$SSH_USER@$NAMENODE_HOST" 'sudo bash -s' < scripts/setup-hdfs.sh
