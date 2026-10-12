@@ -16,4 +16,3 @@ fi
 tar -czf - cluster.conf config scripts systemd README.md nginx |
   ssh "${ssh_opts[@]}" "$edge" 'mkdir -p ~/data-platforms/hw2; tar -xzf - -C ~/data-platforms/hw2'
 ssh "${ssh_opts[@]}" "$edge" 'bash ~/data-platforms/hw2/scripts/deploy-yarn-edge.sh'
-bash scripts/open-web.sh --check

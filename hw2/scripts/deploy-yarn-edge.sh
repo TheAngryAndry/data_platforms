@@ -46,4 +46,3 @@ done
 sudo nginx -t
 sudo systemctl enable --now nginx
 sudo systemctl reload nginx
-bash scripts/verify-edge.sh
