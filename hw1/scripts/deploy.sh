@@ -1,18 +1,10 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -e
 
 cd "$(dirname "$0")/.."
-source ./cluster.conf
-ssh_opts=(-F "${LOCAL_SSH_CONFIG:-/dev/null}" -i "${LOCAL_SSH_KEY:-$HOME/.ssh/id_ed25519_mts_course}"
-  -o BatchMode=yes -o StrictHostKeyChecking=accept-new
-  -o "UserKnownHostsFile=${SSH_KNOWN_HOSTS:-$HOME/.ssh/known_hosts}")
+source ./cluster.env
+ssh_opts=(-i "${LOCAL_SSH_KEY:-$HOME/.ssh/id_ed25519_mts_course}" -o BatchMode=yes -o StrictHostKeyChecking=accept-new)
 edge="$SSH_USER@$EDGE_PUBLIC_IP"
-if (( $# != 0 )); then
-  echo 'Usage: deploy.sh' >&2
-  exit 1
-fi
 
-# Transfer only this homework's sources, not runtime files or logs.
-tar -czf - cluster.conf config scripts systemd README.md |
-  ssh "${ssh_opts[@]}" "$edge" 'mkdir -p ~/data-platforms/hw1; tar -xzf - -C ~/data-platforms/hw1'
-ssh "${ssh_opts[@]}" "$edge" 'bash ~/data-platforms/hw1/scripts/deploy-hdfs-edge.sh'
+scp "${ssh_opts[@]}" -r "$PWD" "$edge:"
+ssh "${ssh_opts[@]}" "$edge" 'bash ~/hw1/scripts/deploy-edge.sh'
