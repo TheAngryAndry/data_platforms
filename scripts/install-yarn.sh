@@ -21,7 +21,7 @@ echo "Backup: $(hostname):$backup"
 if [[ $role == edge ]]; then
   export DEBIAN_FRONTEND=noninteractive
   apt-get update -qq
-  apt-get install -y -qq openjdk-11-jre-headless nginx python3 curl iptables
+  apt-get install -y -qq "$JAVA_PACKAGE" nginx python3 curl iptables
   if [[ ! -x /opt/hadoop/bin/yarn ]]; then
     tar -xzf runtime/hadoop.tar.gz -C /opt
     ln -sfn "/opt/hadoop-$HADOOP_VERSION" /opt/hadoop

@@ -72,12 +72,13 @@ bash ~/data-platforms/scripts/verify-edge.sh
 
 Если туннель уже открыт, использовать `./scripts/verify-web.sh`. Для проверки прямого публичного доступа после открытия портов — `VERIFY_HOST=171.22.72.148 ./scripts/verify-web.sh`. Финальная проверка в `deploy.sh` использует SSH-туннель.
 
+`bash tests/deploy.sh` проверяет выбор этапов и остановку при ошибке без подключения к кластеру.
+
 Повторный запуск `deploy.sh` сохраняет предыдущую конфигурацию в `/var/backups/data-platforms.*`, обновляет настройки и перезапускает YARN. Запускать его нужно, когда в кластере нет работающих задач.
 
 При ошибке скрипты останавливаются. Логи сервисов можно посмотреть через `sudo journalctl -u yarn-resourcemanager`, `-u yarn-nodemanager` и `-u mapred-historyserver` на соответствующем узле. Логи Hadoop находятся в `/var/log/hadoop-yarn` и `/var/log/hadoop-mapred`.
 
-- `scripts/deploy.sh` — запуск с локальной машины.
-- `scripts/deploy-edge.sh` — последовательный запуск HDFS и YARN через edge.
+- `scripts/deploy.sh` — запуск с локальной машины, последовательно HDFS и YARN через edge.
 - `scripts/deploy-hdfs-edge.sh`, `scripts/install-hdfs.sh` — установка HDFS.
 - `scripts/deploy-yarn-edge.sh`, `scripts/install-yarn.sh` — установка YARN и резервная копия настроек.
 - `scripts/configure-hosts.py` — исправление адресов кластера в `/etc/hosts`.

@@ -12,7 +12,6 @@ done
 ssh "${ssh_opts[@]}" "$SSH_USER@$NAMENODE_HOST" \
   'systemctl is-active --quiet hdfs-namenode && systemctl is-active --quiet hdfs-secondarynamenode && sudo -u hdfs /opt/hadoop/bin/hdfs --config /etc/hadoop/conf dfsadmin -report'
 
-mkdir -p runtime
 mkdir -p runtime/hdfs-conf
 for file in core-site.xml hdfs-site.xml; do
   scp "${ssh_opts[@]}" "$SSH_USER@$NAMENODE_HOST:/etc/hadoop/conf/$file" runtime/hdfs-conf/

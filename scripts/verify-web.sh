@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-cd "$(dirname "$0")/.."
-source ./cluster.conf
 host=${VERIFY_HOST:-127.0.0.1}
 for endpoint in 9870/dfshealth.html 9868/ 9864/datanode.html 9865/datanode.html \
   9869/datanode.html 8088/cluster 8042/node 8043/node 19888/jobhistory; do
