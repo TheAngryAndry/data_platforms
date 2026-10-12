@@ -12,6 +12,7 @@ if ssh "${ssh_opts[@]}" "$SSH_USER@$NAMENODE_HOST" 'sudo test -f /data/hdfs/name
     ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'systemctl is-active --quiet hdfs-datanode'
   done
   echo 'PASS: existing HDFS reused without formatting or restart'
+  bash scripts/verify-edge.sh
   exit 0
 fi
 
@@ -23,9 +24,9 @@ done
 mkdir -p runtime
 curl -fL "$HADOOP_URL" -o "runtime/hadoop-${HADOOP_VERSION}.tar.gz"
 for host in $DATANODE_HOSTS; do
-  tar -czf - cluster.conf config scripts systemd nginx "runtime/hadoop-${HADOOP_VERSION}.tar.gz" |
-    ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'mkdir -p ~/data-platforms; tar -xzf - -C ~/data-platforms'
-  ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'sudo bash ~/data-platforms/scripts/install-hdfs.sh'
+  tar -czf - cluster.conf config scripts systemd "runtime/hadoop-${HADOOP_VERSION}.tar.gz" |
+    ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'mkdir -p ~/data-platforms/hw1; tar -xzf - -C ~/data-platforms/hw1'
+  ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'sudo bash ~/data-platforms/hw1/scripts/install-hdfs.sh'
 done
 
 ssh "${ssh_opts[@]}" "$SSH_USER@$NAMENODE_HOST" '
@@ -40,6 +41,7 @@ for attempt in $(seq 1 30); do
     'sudo -u hdfs /opt/hadoop/bin/hdfs --config /etc/hadoop/conf dfsadmin -report')
   if grep -q 'Live datanodes (3)' <<< "$report"; then
     echo 'PASS: HDFS started; 3 live DataNodes'
+    bash scripts/verify-edge.sh
     exit 0
   fi
   sleep 2

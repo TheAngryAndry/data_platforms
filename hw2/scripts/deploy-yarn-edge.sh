@@ -7,10 +7,16 @@ ssh_opts=(-i "$HOME/.ssh/team_internal" -o BatchMode=yes -o StrictHostKeyCheckin
 
 # Check the existing cluster before changing configuration.
 for host in $DATANODE_HOSTS; do
-  ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'systemctl is-active --quiet hdfs-datanode'
+  ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'systemctl is-active --quiet hdfs-datanode' || {
+    echo 'HW2 requires the running HDFS cluster from HW1. Complete hw1 first.' >&2
+    exit 1
+  }
 done
 ssh "${ssh_opts[@]}" "$SSH_USER@$NAMENODE_HOST" \
-  'systemctl is-active --quiet hdfs-namenode && systemctl is-active --quiet hdfs-secondarynamenode && sudo -u hdfs /opt/hadoop/bin/hdfs --config /etc/hadoop/conf dfsadmin -report'
+  'systemctl is-active --quiet hdfs-namenode && systemctl is-active --quiet hdfs-secondarynamenode && sudo -u hdfs /opt/hadoop/bin/hdfs --config /etc/hadoop/conf dfsadmin -report' || {
+    echo 'HW2 requires the running HDFS cluster from HW1. Complete hw1 first.' >&2
+    exit 1
+  }
 
 mkdir -p runtime/hdfs-conf
 for file in core-site.xml hdfs-site.xml; do
@@ -25,8 +31,8 @@ fi
 sudo bash scripts/install-yarn.sh edge
 for host in $NODEMANAGER_HOSTS; do
   tar -czf - cluster.conf config scripts systemd nginx |
-    ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'mkdir -p ~/data-platforms; tar -xzf - -C ~/data-platforms'
-  ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'sudo bash ~/data-platforms/scripts/install-yarn.sh worker'
+    ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'mkdir -p ~/data-platforms/hw2; tar -xzf - -C ~/data-platforms/hw2'
+  ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'sudo bash ~/data-platforms/hw2/scripts/install-yarn.sh worker'
 done
 
 ssh "${ssh_opts[@]}" "$SSH_USER@$NAMENODE_HOST" 'sudo bash -s' < scripts/setup-hdfs.sh
