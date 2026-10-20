@@ -1,0 +1,22 @@
+[Unit]
+Description=Apache Hadoop YARN NodeManager
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=yarn
+Group=hadoop
+Environment=HADOOP_HOME=/opt/hadoop
+Environment=HADOOP_MAPRED_HOME=/opt/hadoop
+Environment=HADOOP_CONF_DIR=/etc/hadoop/yarn-conf
+Environment=HADOOP_LOG_DIR=/var/log/hadoop-yarn
+Environment=HADOOP_PID_DIR=/run/yarn-nodemanager
+RuntimeDirectory=yarn-nodemanager
+ExecStart=/opt/hadoop/bin/yarn nodemanager
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

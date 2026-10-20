@@ -9,3 +9,6 @@
 ./hw1/scripts/deploy.sh
 ./hw2/scripts/deploy.sh
 ```
+- [hw3: HDFS, YARN и Hive](hw3/README.md): ДЗ1 + ДЗ2 + ДЗ3, включая HiveServer2, Metastore с PostgreSQL и загрузку партиций.
+
+Для установки всех трёх заданий на чистых серверах: `./hw3/scripts/deploy.sh`.

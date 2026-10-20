@@ -1,0 +1,10 @@
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+export HADOOP_HOME=/opt/hadoop
+export HADOOP_MAPRED_HOME=/opt/hadoop
+export HADOOP_CONF_DIR=/etc/hadoop/yarn-conf
+export HADOOP_LOG_DIR=${HADOOP_LOG_DIR:-/tmp}
+export HADOOP_PID_DIR=${HADOOP_PID_DIR:-/tmp}
+export HADOOP_HEAPSIZE_MAX=512
+export YARN_RESOURCEMANAGER_OPTS="-Xms128m -Xmx512m"
+export YARN_NODEMANAGER_OPTS="-Xms128m -Xmx256m"
+export MAPRED_HISTORYSERVER_OPTS="-Xms128m -Xmx256m"
