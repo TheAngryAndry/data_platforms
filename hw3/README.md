@@ -1,6 +1,6 @@
 # HDFS + YARN + Hive
 
-Установка HDFS, YARN и Hive на чистых серверах. Папка содержит ДЗ1 + ДЗ2 + ДЗ3.
+Папка содержит ДЗ1 + ДЗ2 + ДЗ3.
 
 На локальной машине нужны `bash`, `ssh`, `tar` и ключ `~/.ssh/id_ed25519_mts_course`.
 На edge-ноде нужны `bash`, `curl`, `ssh`, `scp`, `tar` и ключ `~/.ssh/team_internal`.
