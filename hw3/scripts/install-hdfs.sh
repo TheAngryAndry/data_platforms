@@ -6,7 +6,7 @@ source ./cluster.conf
 
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
-apt-get install -y -qq "$JAVA_PACKAGE" procps
+apt-get install -y -qq "$JAVA_PACKAGE" procps python3
 
 groupadd --system hadoop
 useradd --system --gid hadoop --home-dir /var/lib/hadoop-hdfs --create-home --shell /usr/sbin/nologin hdfs

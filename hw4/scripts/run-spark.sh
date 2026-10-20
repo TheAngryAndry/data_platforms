@@ -9,6 +9,10 @@ export HADOOP_HEAPSIZE=256 PYSPARK_PYTHON=/usr/bin/python3
 for service in yarn-resourcemanager hive-metastore hive-server2; do
   systemctl is-active --quiet "$service"
 done
+for host in team-01-00 team-01-01; do
+  ssh -i "$HOME/.ssh/team_internal" -o BatchMode=yes "team@$host" \
+    'test -x /usr/bin/python3 || { sudo apt-get update -qq && sudo env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq python3; }'
+done
 ssh -i "$HOME/.ssh/team_internal" -o BatchMode=yes team@team-01-nn \
   'sudo bash -s' < scripts/fix-hdfs-address.sh
 /opt/hadoop/bin/hdfs dfs -mkdir -p /user/team/hw4/input

@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+if [[ ! -x /usr/bin/python3 ]]; then
+  export DEBIAN_FRONTEND=noninteractive
+  apt-get update -qq
+  apt-get install -y -qq python3
+fi
 test -x /usr/lib/jvm/java-11-openjdk-amd64/bin/java
 test -x /opt/hadoop/bin/yarn
 test -x /opt/hive/bin/beeline

@@ -18,10 +18,14 @@ systemctl list-units --type=service --all --no-pager > "$backup/services.txt"
 ss -lnt > "$backup/ports.txt"
 echo "Backup: $(hostname):$backup"
 
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -qq
+packages=(python3)
 if [[ $role == edge ]]; then
-  export DEBIAN_FRONTEND=noninteractive
-  apt-get update -qq
-  apt-get install -y -qq "$JAVA_PACKAGE" nginx python3 curl iptables
+  packages+=("$JAVA_PACKAGE" nginx curl iptables)
+fi
+apt-get install -y -qq "${packages[@]}"
+if [[ $role == edge ]]; then
   if [[ ! -x /opt/hadoop/bin/yarn ]]; then
     tar -xzf runtime/hadoop.tar.gz -C /opt
     ln -sfn "/opt/hadoop-$HADOOP_VERSION" /opt/hadoop

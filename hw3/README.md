@@ -9,7 +9,7 @@ cd hw3
 ./scripts/deploy.sh
 ```
 
-Скрипт копирует файлы в `~/data-platforms/hw3` на edge, устанавливает Java 11, Hadoop 3.4.2 и HDFS с тремя DataNode, форматирует NameNode и запускает сервисы. Затем проверяет HDFS, с NameNode берёт конфигурацию HDFS и дистрибутив Hadoop для edge. Создаёт пользователей `yarn` и `mapred`, каталоги, конфигурацию и systemd-сервисы, устанавливает nginx и запускает YARN.
+Скрипт копирует файлы в `~/data-platforms/hw3` на edge, устанавливает Java 11, Python 3, Hadoop 3.4.2 и HDFS с тремя DataNode, форматирует NameNode и запускает сервисы. Затем проверяет HDFS, с NameNode берёт конфигурацию HDFS и дистрибутив Hadoop для edge. Создаёт пользователей `yarn` и `mapred`, каталоги, конфигурацию и systemd-сервисы, устанавливает nginx и запускает YARN.
 
 После этого на edge устанавливаются Hive 4.0.0-alpha-2 и PostgreSQL. Metastore и HiveServer2 работают отдельными systemd-сервисами. HiveServer2 обращается к Metastore по Thrift, Metastore хранит метаданные в PostgreSQL. Несколько клиентов подключаются к HiveServer2 по JDBC; embedded Derby не используется.
 
@@ -59,7 +59,7 @@ ssh -F /dev/null -i ~/.ssh/id_ed25519_mts_course \
 
 URL: `jdbc:hive2://127.0.0.1:10000/default`, пользователь `team`, пароль пустой. Аутентификация обеспечивается SSH; запросы выполняются от `hive` (`doAs=false`). Параметр `hive.support.concurrency=false` отключает блокировки таблиц, а не клиентские сессии.
 
-Для доступа к веб-интерфейсам запустите на локально из папки `hw3`:
+Для доступа к веб-интерфейсам запустите на локальной машине из папки `hw3`:
 
 ```bash
 ./scripts/open-web.sh

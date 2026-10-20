@@ -1,6 +1,6 @@
 # Spark под YARN
 
-Пока здесь только ДЗ4. Нужен работающий кластер из ДЗ3: HDFS, YARN, HiveServer2 и Metastore. На узлах установлены Java 11 и Python 3.
+Пока здесь только ДЗ4. Нужен работающий кластер из ДЗ3: HDFS, YARN, HiveServer2 и Metastore. На узлах должна быть установлена Java 11; Python 3 скрипт установит при его отсутствии.
 
 Из корня репозитория:
 
@@ -10,7 +10,7 @@
 
 На локальной машине нужны `bash`, `ssh`, `tar` и ключ `~/.ssh/id_ed25519_mts_course`. Скрипт копирует папку в `~/data-platforms/hw4` на edge, устанавливает Spark 3.5.7 с проверкой SHA-512 и выполняет задание. Перед установкой сохраняет состояние в `/var/backups/data-platforms-spark.*`.
 
-На edge нужен ключ `~/.ssh/team_internal`. `fix-hdfs-address.sh` исправляет loopback-адрес имени `team-01-nn` в `/etc/hosts` и перезапускает его DataNode. Исходный файл сохраняется в `/var/backups/data-platforms-hdfs-address.*`; при верном адресе шаг пропускается.
+На edge нужен ключ `~/.ssh/team_internal`; для установки Python при его отсутствии пользователь `team` должен иметь `sudo` без пароля на NodeManager. `fix-hdfs-address.sh` исправляет loopback-адрес имени `team-01-nn` в `/etc/hosts` и перезапускает его DataNode. Исходный файл сохраняется в `/var/backups/data-platforms-hdfs-address.*`; при верном адресе шаг пропускается.
 
 `run-spark.sh` загружает `data/sales.csv` в HDFS и запускает `sales.py` через `spark-submit --master yarn --deploy-mode cluster`. Driver и два executor работают на `team-01-00` и `team-01-01`; каждому выделено 512 MiB памяти JVM и 384 MiB дополнительно.
 
