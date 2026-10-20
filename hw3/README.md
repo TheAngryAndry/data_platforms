@@ -2,10 +2,6 @@
 
 Папка содержит ДЗ1 + ДЗ2 + ДЗ3.
 
-На локальной машине нужны `bash`, `ssh`, `tar` и ключ `~/.ssh/id_ed25519_mts_course`.
-На edge-ноде нужны `bash`, `curl`, `ssh`, `scp`, `tar` и ключ `~/.ssh/team_internal`.
-Пользователь `team` должен иметь доступ к внутренним узлам и `sudo` без пароля.
-
 Из корня репозитория:
 
 ```bash
@@ -63,15 +59,13 @@ ssh -F /dev/null -i ~/.ssh/id_ed25519_mts_course \
 
 URL: `jdbc:hive2://127.0.0.1:10000/default`, пользователь `team`, пароль пустой. Аутентификация обеспечивается SSH; запросы выполняются от `hive` (`doAs=false`). Параметр `hive.support.concurrency=false` отключает блокировки таблиц, а не клиентские сессии.
 
-Журналы: `sudo journalctl -u hive-metastore -u hive-server2` и `/tmp/hive/hive.log`.
-
-Для доступа к веб-интерфейсам запустите на локальной машине из папки `hw3`:
+Для доступа к веб-интерфейсам запустите на локально из папки `hw3`:
 
 ```bash
 ./scripts/open-web.sh
 ```
 
-Оставьте терминал открытым. Скрипт создаёт SSH-туннель к edge; для остановки нажмите `Ctrl+C`. Локальные порты из таблицы должны быть свободны.
+Скрипт подключается по SSH к edge.
 
 | Демон | Узел | Адрес через туннель |
 | --- | --- | --- |
@@ -84,20 +78,3 @@ URL: `jdbc:hive2://127.0.0.1:10000/default`, пользователь `team`, п
 | NodeManager | team-01-00 | [8042](http://127.0.0.1:8042/node) |
 | NodeManager | team-01-01 | [8043](http://127.0.0.1:8043/node) |
 | JobHistoryServer | team-01-en | [19888](http://127.0.0.1:19888/jobhistory) |
-
-Внешняя сеть стенда пропускает только порт 22. Для прямого HTTP-доступа администратор облака должен открыть порты из таблицы; тогда вместо `127.0.0.1` используйте `171.22.72.148`. nginx уже настроен на эти порты и разрешает только GET и HEAD. Кластер работает без Kerberos, доступ через туннель защищён SSH-ключом.
-
-- `scripts/deploy.sh`: запуск с локальной машины.
-- `scripts/deploy-hdfs-edge.sh`: скачивание Hadoop, копирование файлов и запуск HDFS на узлах.
-- `scripts/install-hdfs.sh`: установка Java, Hadoop и конфигурации HDFS на узле.
-- `scripts/deploy-yarn-edge.sh`: копирование файлов и запуск установки на узлах.
-- `scripts/install-yarn.sh`: установка YARN и nginx, резервная копия настроек.
-- `scripts/configure-hosts.py`: настройка внутренних адресов кластера в `/etc/hosts`.
-- `scripts/setup-hdfs.sh`: создание пользователей и каталогов для YARN и истории задач в существующем HDFS.
-- `scripts/firewall.sh`: ограничение доступа к backend-портам внутренней сетью.
-- `scripts/open-web.sh`: SSH-туннель для веб-интерфейсов.
-- `scripts/deploy-hive-edge.sh`: установка и запуск Hive на edge.
-- `scripts/install-hive.sh`, `scripts/configure-hive.py`: дистрибутив, PostgreSQL и настройки Hive.
-- `scripts/setup-hive-hdfs.sh`: пользователь и каталоги Hive на NameNode.
-- `scripts/load-data.sh`, `sql/sales.sql`: загрузка партиций.
-- `scripts/beeline.sh`: JDBC-клиент.
