@@ -2,13 +2,10 @@
 
 - [hw1: HDFS](hw1/README.md): установка Java и Hadoop, NameNode, SecondaryNameNode и трёх DataNode.
 - [hw2: YARN и веб-интерфейсы](hw2/README.md): ResourceManager, два NodeManager, JobHistoryServer и nginx поверх кластера из ДЗ1.
+- [hw3: HDFS, YARN и Hive](hw3/README.md): HiveServer2, отдельный Metastore с PostgreSQL и автоматическая загрузка данных в партиционированную таблицу.
 
-Запуск с локальной машины из корня репозитория:
+Папка `hw3` содержит ДЗ1 + ДЗ2 + ДЗ3. Установка на чистых серверах с локальной машины из корня репозитория:
 
 ```bash
-./hw1/scripts/deploy.sh
-./hw2/scripts/deploy.sh
+./hw3/scripts/deploy.sh
 ```
-- [hw3: HDFS, YARN и Hive](hw3/README.md): ДЗ1 + ДЗ2 + ДЗ3, включая HiveServer2, Metastore с PostgreSQL и загрузку партиций.
-
-Для установки всех трёх заданий на чистых серверах: `./hw3/scripts/deploy.sh`.
