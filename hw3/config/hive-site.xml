@@ -77,6 +77,14 @@
     <value>mr</value>
   </property>
   <property>
+    <name>hive.aux.jars.path</name>
+    <value>file:///opt/hive/lib/commons-collections-3.2.2.jar,file:///opt/hive/lib/commons-lang-2.6.jar</value>
+  </property>
+  <property>
+    <name>yarn.app.mapreduce.am.staging-dir</name>
+    <value>/user/hive/staging</value>
+  </property>
+  <property>
     <name>hive.exec.scratchdir</name>
     <value>/tmp/hive</value>
   </property>
