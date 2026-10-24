@@ -1,0 +1,12 @@
+[Unit]
+Description=Restrict Hadoop backend ports to the cluster network
+Before=yarn-resourcemanager.service mapred-historyserver.service
+After=network-pre.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/hadoop-web-firewall
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

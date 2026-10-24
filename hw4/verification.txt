@@ -1,0 +1,56 @@
+Проверка объединённого ДЗ4 — 24.10.2026
+
+В hw4 включены HDFS, YARN и Hive из ДЗ3, включая исправления установки
+Python из GitHub main (82effd41a04f8f89a759f75d17a39cbfb8b62645).
+ДЗ4 не требует соседних папок hw1, hw2 или hw3.
+
+Локально:
+  python3 hw4/tests/check.py
+  PASS: standalone archives, deploy order, stop on failure, Hive readiness,
+        hosts aliases and idempotence.
+  Bash, Python и XML: синтаксис проверен.
+
+С локальной машины:
+  ./hw4/scripts/deploy-spark.sh
+  Код завершения: 0.
+
+Запуск на team-01-en, вычисления под YARN на team-01-00 и team-01-01:
+  application_1792824396130_0001
+  State: FINISHED
+  Final-State: SUCCEEDED
+  Log Aggregation Status: SUCCEEDED
+  Driver: team-01-00
+  Executors: team-01-00, team-01-01
+
+На team-01-en:
+  cd ~/data-platforms/hw4
+  ./scripts/check-spark.sh
+  Сравнение с data/expected.tsv прошло:
+
+  sale_date=2026-10-18
+  sale_date=2026-10-19
+  2026-10-18  3  15  1660.00
+  2026-10-19  3   8   890.00
+
+Полную установку на чистых серверах заново не выполняли:
+на учебных узлах уже работает кластер. Её последовательность, упаковка
+и обработка ошибок проверены изолированно с подменой SSH.
+
+Дополнительная проверка на team-01-en:
+  ./scripts/load-data.sh
+  ./scripts/beeline.sh --silent=true --showHeader=false --outputformat=tsv2 \
+    -e 'SHOW PARTITIONS hw3.sales; SELECT sale_date, COUNT(*), SUM(quantity * unit_price) FROM hw3.sales GROUP BY sale_date ORDER BY sale_date;'
+  Загрузка двух партиций ДЗ3 прошла; по 3 строки, выручка 1660.00 и 890.00.
+
+  JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64 \
+    HADOOP_CONF_DIR=/etc/hadoop/yarn-conf \
+    /opt/hadoop/bin/hdfs fsck /user/team/hw4 -files -blocks -locations
+  HEALTHY; по 3 реплики, потерянных и повреждённых блоков нет.
+
+На team-01-nn (вход через edge):
+  sudo -u hdfs /opt/hadoop/bin/hdfs --config /etc/hadoop/conf dfsadmin -report
+  Live datanodes (3), адреса 10.1.0.11 / 10.1.0.12 / 10.1.0.13.
+  Under replicated blocks: 0; Blocks with corrupt replicas: 0; Missing blocks: 0.
+
+На team-01-en сервисы ResourceManager, JobHistoryServer, HiveServer2,
+Metastore, PostgreSQL и nginx активны; оба NodeManager в состоянии RUNNING.

@@ -2,10 +2,13 @@
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
-ssh_opts=(-F /dev/null -i "$HOME/.ssh/id_ed25519_mts_course" -o BatchMode=yes)
-edge=team@171.22.72.148
+source ./cluster.conf
+ssh_opts=(-F "${LOCAL_SSH_CONFIG:-/dev/null}" -i "${LOCAL_SSH_KEY:-$HOME/.ssh/id_ed25519_mts_course}"
+  -o BatchMode=yes -o StrictHostKeyChecking=accept-new
+  -o "UserKnownHostsFile=${SSH_KNOWN_HOSTS:-$HOME/.ssh/known_hosts}")
+edge="$SSH_USER@$EDGE_PUBLIC_IP"
 
-tar -czf - README.md scripts sql data sales.py |
+tar -czf - cluster.conf config scripts systemd README.md nginx data sql sales.py |
   ssh "${ssh_opts[@]}" "$edge" 'mkdir -p ~/data-platforms/hw4; tar -xzf - -C ~/data-platforms/hw4'
 ssh "${ssh_opts[@]}" "$edge" \
   'cd ~/data-platforms/hw4 && sudo bash scripts/install-spark.sh && bash scripts/run-spark.sh'

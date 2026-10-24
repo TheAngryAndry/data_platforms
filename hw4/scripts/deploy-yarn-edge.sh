@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+source ./cluster.conf
+ssh_opts=(-i "$HOME/.ssh/team_internal" -o BatchMode=yes -o StrictHostKeyChecking=accept-new)
+
+for host in $DATANODE_HOSTS; do
+  ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'systemctl is-active --quiet hdfs-datanode' || {
+    echo 'YARN requires running HDFS. Complete deploy-hdfs-edge.sh first.' >&2
+    exit 1
+  }
+done
+ssh "${ssh_opts[@]}" "$SSH_USER@$NAMENODE_HOST" \
+  'systemctl is-active --quiet hdfs-namenode && systemctl is-active --quiet hdfs-secondarynamenode && sudo -u hdfs /opt/hadoop/bin/hdfs --config /etc/hadoop/conf dfsadmin -report' || {
+    echo 'YARN requires running HDFS. Complete deploy-hdfs-edge.sh first.' >&2
+    exit 1
+  }
+
+mkdir -p runtime/hdfs-conf
+for file in core-site.xml hdfs-site.xml; do
+  scp "${ssh_opts[@]}" "$SSH_USER@$NAMENODE_HOST:/etc/hadoop/conf/$file" runtime/hdfs-conf/
+done
+if [[ ! -x /opt/hadoop/bin/yarn ]]; then
+  ssh "${ssh_opts[@]}" "$SSH_USER@$NAMENODE_HOST" \
+    "tar -C /opt -czf - hadoop-$HADOOP_VERSION" > runtime/hadoop.tar.gz
+fi
+
+sudo bash scripts/install-yarn.sh edge
+for host in $NODEMANAGER_HOSTS; do
+  tar -czf - cluster.conf config scripts systemd nginx |
+    ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'mkdir -p ~/data-platforms/hw4; tar -xzf - -C ~/data-platforms/hw4'
+  ssh "${ssh_opts[@]}" "$SSH_USER@$host" 'sudo bash ~/data-platforms/hw4/scripts/install-yarn.sh worker'
+done
+
+ssh "${ssh_opts[@]}" "$SSH_USER@$NAMENODE_HOST" 'sudo bash -s' < scripts/setup-hdfs.sh
+
+sudo systemctl enable yarn-resourcemanager mapred-historyserver
+sudo systemctl restart yarn-resourcemanager mapred-historyserver
+for host in $NODEMANAGER_HOSTS; do
+  ssh "${ssh_opts[@]}" "$SSH_USER@$host" \
+    'sudo systemctl enable yarn-nodemanager; sudo systemctl restart yarn-nodemanager'
+done
+sudo nginx -t
+sudo systemctl enable --now nginx
+sudo systemctl reload nginx
